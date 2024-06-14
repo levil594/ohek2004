@@ -14,6 +14,7 @@
 #include <chrono>
 #include <thread>
 #include <cmath>
+// #include <Object.h>
 
 void errorCallback(int error, const char* description)
 {
@@ -31,11 +32,6 @@ int Physics()
 }
 
 int Initialize()
-{
-    return 0;
-}
-
-int Update()
 {
     return 0;
 }
@@ -86,10 +82,10 @@ void RenderObstacle(float x, float y, float width, float height)
     glEnd();
 }
 
-int Render()
+int Render(GLFWwindow* window)
 {
     int width, height;
-    glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
+    glfwGetFramebufferSize(window, &width, &height);
 
     // Set up the viewport
     glViewport(0, 0, width, height);
@@ -151,30 +147,48 @@ int main(void)
     if (!glfwInit())
         return -1;
 
+    // Create a windowed mode window and its OpenGL context
     GLFWwindow* window;
     window = glfwCreateWindow(800, 600, "Google Dino Run Copy Game", NULL, NULL);
-
     if (!window)
     {
         glfwTerminate();
         return -1;
     }
 
+    // Make the window's context current
     glfwMakeContextCurrent(window);
+
+    // Set GLFW error callback
     glfwSetErrorCallback(errorCallback);
+
+    // Set GLFW key callback
     glfwSetKeyCallback(window, keyCallback);
 
+    // Initialize your application
     Initialize();
 
+    // Loop until the user closes the window
     while (!glfwWindowShouldClose(window))
     {
+        // Poll for and process events
         glfwPollEvents();
+
+        // Perform physics calculations
         Physics();
-        Update();
-        Render();
+
+        // Update game state
+        // Update();
+
+        // Render frame
+        Render(window);
+
+        // Swap front and back buffers
         glfwSwapBuffers(window);
     }
 
+    // Clean up GLFW resources
     glfwTerminate();
+
     return 0;
 }
